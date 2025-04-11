@@ -299,6 +299,8 @@ let micHoldTimer = null;
 
 const micHoldThreshold = 750; // .75 second
 
+console.log("🎯 Binding mic listeners...");
+
 // === Bind for both mouse and touch ===
 centerButton.addEventListener("mousedown", handlePressStart);
 centerButton.addEventListener("mouseup", handlePressEnd);
@@ -347,8 +349,10 @@ async function sendVoiceQuery(transcribedText) {
     });
 
     const data = await res.json();
+    console.log("Waiting for response...");
 
     if (res.ok) {
+      console.log("✅ Response from backend:", data);
       updateNowPlaying(data);
       playPreview(data.previewUrl);
     } else {
@@ -380,38 +384,50 @@ function playPreview(previewUrl) {
 
 // === Updated Mic Press Logic ===
 function handlePressStart() {
+  console.log("🔥 handlePressStart triggered");
+
   micHoldTimer = setTimeout(() => {
+    console.log("✅ Long press detected — starting recognition");
     micPopup.classList.add("show");
-    screenOverlay.classList.add("show"); // darken background
+    screenOverlay.classList.add("show");
+
     if (recognition) {
       recognition.start();
+      console.log("🗣️ recognition.start() called");
+    } else {
+      console.warn("❌ SpeechRecognition not available");
     }
   }, micHoldThreshold);
 }
 
+
 function handlePressEnd() {
+  console.log("🛑 handlePressEnd triggered");
   clearTimeout(micHoldTimer);
   micHoldTimer = null;
 
-  console.log("Mic released.");
-
   if (micPopup.classList.contains("show")) {
+    console.log("🎤 Mic popup was visible — ending session");
+
     micPopup.classList.remove("show");
     screenOverlay.classList.remove("show");
 
     if (recognition) {
       recognition.stop();
-      console.log("Recognition stopped.");
+      console.log("🛑 recognition.stop() called");
     }
 
-    console.log("Captured text:", capturedText);
+    console.log("📝 Captured text:", capturedText);
 
     if (capturedText.trim()) {
-      console.log("Sending to backend...");
+      console.log("🚀 Sending captured text to backend...");
       sendVoiceQuery(capturedText.trim());
     } else {
-      console.log("No captured text to send.");
+      console.log("⚠️ No captured text");
     }
+  } else {
+    console.log("❌ Mic popup was not showing, nothing to stop.");
   }
 }
+
 

@@ -4,7 +4,14 @@ const cors = require("cors");
 
 const app = express();
 
-app.use(cors({ origin: "*" }));
+const corsOptions = {
+  origin: "https://danielleahenry.github.io",
+  methods: ["GET", "POST"],
+  allowedHeaders: ["Content-Type"]
+};
+
+app.use(cors(corsOptions));
+
 app.use(express.json());
 
 app.post("/search", async (req, res) => {

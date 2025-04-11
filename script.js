@@ -339,6 +339,8 @@ if (SpeechRecognition) {
 
 // === Voice Backend Integration ===
 async function sendVoiceQuery(transcribedText) {
+  console.log("🎯 sendVoiceQuery started with:", transcribedText);
+
   try {
     const res = await fetch("https://auri-backend.glitch.me/search", {
       method: "POST",
@@ -348,18 +350,20 @@ async function sendVoiceQuery(transcribedText) {
       body: JSON.stringify({ query: transcribedText })
     });
 
+    console.log("🌐 Received response:", res);
+
     const data = await res.json();
-    console.log("Waiting for response...");
+    console.log("📦 Parsed response JSON:", data);
 
     if (res.ok) {
-      console.log("✅ Response from backend:", data);
+      console.log("✅ Response is OK — Updating UI...");
       updateNowPlaying(data);
       playPreview(data.previewUrl);
     } else {
-      console.error("Backend error:", data.error);
+      console.error("❌ Backend returned error:", data);
     }
   } catch (err) {
-    console.error("Fetch failed:", err);
+    console.error("💥 Fetch failed:", err);
   }
 }
 

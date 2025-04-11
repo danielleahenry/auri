@@ -342,7 +342,7 @@ async function sendVoiceQuery(transcribedText) {
   console.log("🎯 sendVoiceQuery started with:", transcribedText);
 
   try {
-    const res = await fetch("https://auri-backend.glitch.me/search", {
+    const res = await fetch("auri-production.up.railway.app", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

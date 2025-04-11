@@ -11,9 +11,13 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.options("*", cors(corsOptions)); // ⬅️ must be after app.use(cors)
-
+app.options("*", cors(corsOptions));
 app.use(express.json());
+
+// ✅ Add this:
+app.get("/", (req, res) => {
+  res.send("✅ Auri backend is live");
+});
 
 app.post("/search", async (req, res) => {
   const { query } = req.body;

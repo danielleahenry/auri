@@ -6,11 +6,12 @@ const app = express();
 
 const corsOptions = {
   origin: "https://danielleahenry.github.io",
-  methods: ["GET", "POST"],
+  methods: ["GET", "POST", "OPTIONS"],
   allowedHeaders: ["Content-Type"]
 };
 
 app.use(cors(corsOptions));
+app.options("*", cors(corsOptions)); // ⬅️ must be after app.use(cors)
 
 app.use(express.json());
 

@@ -12,7 +12,7 @@ const corsOptions = {
   optionsSuccessStatus: 200, // Helps with legacy browser issues
 };
 
-app.use(cors(corsOptions)); // Automatically applies CORS to all routes
+app.use(cors(corsOptions)); // Apply CORS middleware globally
 app.use(express.json());
 
 // Route to handle the search

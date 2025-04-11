@@ -16,7 +16,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 // Handle preflight requests (OPTIONS method)
-app.options("*", (req, res) => {
+app.options("/search", (req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "https://danielleahenry.github.io");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");

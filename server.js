@@ -4,21 +4,23 @@ const cors = require("cors");
 
 const app = express();
 
+// ✅ Correct CORS config
 const corsOptions = {
   origin: "https://danielleahenry.github.io",
   methods: ["GET", "POST", "OPTIONS"],
-  allowedHeaders: ["Content-Type"]
+  allowedHeaders: ["Content-Type"],
+  optionsSuccessStatus: 200 // fixes legacy browser issues
 };
 
 app.use(cors(corsOptions));
-app.options("*", cors(corsOptions));
 app.use(express.json());
 
-// ✅ Add this:
+// Health check
 app.get("/", (req, res) => {
   res.send("✅ Auri backend is live");
 });
 
+// Main route
 app.post("/search", async (req, res) => {
   const { query } = req.body;
 

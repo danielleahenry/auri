@@ -360,11 +360,18 @@ async function sendVoiceQuery(transcribedText) {
 }
 
 function updateNowPlaying({ title, artist, coverUrl }) {
-  document.getElementById("nowplaying-title").textContent = title;
-  document.getElementById("nowplaying-artist").textContent = artist;
-  document.getElementById("nowplaying-cover").src = coverUrl;
-  showScreen("nowplaying");
+  document.getElementById("nowplaying-title").textContent = "Loading...";
+  document.getElementById("nowplaying-artist").textContent = "";
+  document.getElementById("nowplaying-cover").src = "https://via.placeholder.com/120";
+
+  setTimeout(() => {
+    document.getElementById("nowplaying-title").textContent = title;
+    document.getElementById("nowplaying-artist").textContent = artist;
+    document.getElementById("nowplaying-cover").src = coverUrl;
+    showScreen("nowplaying");
+  }, 300);
 }
+
 
 function playPreview(previewUrl) {
   const audio = new Audio(previewUrl);

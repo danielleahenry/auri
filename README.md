@@ -30,5 +30,7 @@ Perfect for multitaskers, accessibility needs, or anyone looking for a nostalgic
 
 ---
 
-## [🔗 Live Demo]https://danielleahenry.github.io/auri/
+## 🔗 Live Demo  
+[https://danielleahenry.github.io/auri/](https://danielleahenry.github.io/auri/)
+
 

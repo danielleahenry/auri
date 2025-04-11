@@ -342,7 +342,7 @@ async function sendVoiceQuery(transcribedText) {
   console.log("🎯 sendVoiceQuery started with:", transcribedText);
 
   try {
-    const res = await fetch("auri-production.up.railway.app", {
+    const res = await fetch("https://auri-production.up.railway.app/search", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

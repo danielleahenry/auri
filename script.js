@@ -299,25 +299,6 @@ let micHoldTimer = null;
 
 const micHoldThreshold = 750; // .75 second
 
-// === Handle press start ===
-function handlePressStart() {
-  micHoldTimer = setTimeout(() => {
-    micPopup.classList.add("show");
-    screenOverlay.classList.add("show"); // darken background
-  }, micHoldThreshold);
-}
-
-// === Handle press end ===
-function handlePressEnd() {
-  clearTimeout(micHoldTimer);
-  micHoldTimer = null;
-
-  if (micPopup.classList.contains("show")) {
-    micPopup.classList.remove("show");
-    screenOverlay.classList.remove("show"); // remove dark overlay
-  }
-}
-
 // === Bind for both mouse and touch ===
 centerButton.addEventListener("mousedown", handlePressStart);
 centerButton.addEventListener("mouseup", handlePressEnd);
@@ -327,9 +308,94 @@ centerButton.addEventListener("touchstart", handlePressStart);
 centerButton.addEventListener("touchend", handlePressEnd);
 centerButton.addEventListener("touchcancel", handlePressEnd);
 
-// Example call
-//updateNowPlaying({
-// title: "Blinding Lights",
-// artist: "The Weeknd",
-// coverUrl: "https://via.placeholder.com/120?text=Blinding+Lights"
-//});
+// === Speech Recognition Setup ===
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recognition = null;
+let capturedText = "";
+
+if (SpeechRecognition) {
+  recognition = new SpeechRecognition();
+  recognition.continuous = true;
+  recognition.lang = 'en-US';
+  recognition.interimResults = true;
+
+  recognition.onresult = (event) => {
+    let transcript = "";
+    for (let i = event.resultIndex; i < event.results.length; ++i) {
+      transcript += event.results[i][0].transcript;
+    }
+    capturedText = transcript;
+    console.log("You said:", transcript);
+  };
+
+  recognition.onerror = (event) => {
+    console.error('Speech recognition error:', event.error);
+  };
+} else {
+  console.warn("Speech Recognition not supported in this browser.");
+}
+
+// === Voice Backend Integration ===
+async function sendVoiceQuery(transcribedText) {
+  try {
+    const res = await fetch("https://auri-backend.glitch.me/search", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ query: transcribedText })
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      updateNowPlaying(data);
+      playPreview(data.previewUrl);
+    } else {
+      console.error("Backend error:", data.error);
+    }
+  } catch (err) {
+    console.error("Fetch failed:", err);
+  }
+}
+
+function updateNowPlaying({ title, artist, coverUrl }) {
+  document.getElementById("nowplaying-title").textContent = title;
+  document.getElementById("nowplaying-artist").textContent = artist;
+  document.getElementById("nowplaying-cover").src = coverUrl;
+  showScreen("nowplaying");
+}
+
+function playPreview(previewUrl) {
+  const audio = new Audio(previewUrl);
+  audio.play();
+}
+
+// === Updated Mic Press Logic ===
+function handlePressStart() {
+  micHoldTimer = setTimeout(() => {
+    micPopup.classList.add("show");
+    screenOverlay.classList.add("show"); // darken background
+    if (recognition) {
+      recognition.start();
+    }
+  }, micHoldThreshold);
+}
+
+function handlePressEnd() {
+  clearTimeout(micHoldTimer);
+  micHoldTimer = null;
+
+  if (micPopup.classList.contains("show")) {
+    micPopup.classList.remove("show");
+    screenOverlay.classList.remove("show");
+    if (recognition) {
+      recognition.stop();
+    }
+
+    if (capturedText.trim()) {
+      sendVoiceQuery(capturedText.trim());
+    }
+  }
+}
+

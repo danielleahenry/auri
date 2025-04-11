@@ -4,23 +4,30 @@ const cors = require("cors");
 
 const app = express();
 
-// ✅ Correct CORS config
-const corsOptions = {
+// ✅ Robust CORS config
+app.use(cors({
   origin: "https://danielleahenry.github.io",
   methods: ["GET", "POST", "OPTIONS"],
   allowedHeaders: ["Content-Type"],
-  optionsSuccessStatus: 200 // fixes legacy browser issues
-};
+  optionsSuccessStatus: 200
+}));
 
-app.use(cors(corsOptions));
 app.use(express.json());
 
-// Health check
+// 🔁 Optional: handle manual preflight (in case the library fails)
+app.options("*", (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "https://danielleahenry.github.io");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.sendStatus(200);
+});
+
+// ✅ Test route
 app.get("/", (req, res) => {
   res.send("✅ Auri backend is live");
 });
 
-// Main route
+// 🎧 Voice search endpoint
 app.post("/search", async (req, res) => {
   const { query } = req.body;
 

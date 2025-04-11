@@ -393,15 +393,24 @@ function handlePressEnd() {
   clearTimeout(micHoldTimer);
   micHoldTimer = null;
 
+  console.log("Mic released.");
+
   if (micPopup.classList.contains("show")) {
     micPopup.classList.remove("show");
     screenOverlay.classList.remove("show");
+
     if (recognition) {
       recognition.stop();
+      console.log("Recognition stopped.");
     }
 
+    console.log("Captured text:", capturedText);
+
     if (capturedText.trim()) {
+      console.log("Sending to backend...");
       sendVoiceQuery(capturedText.trim());
+    } else {
+      console.log("No captured text to send.");
     }
   }
 }

@@ -25,6 +25,10 @@ app.options("/search", (req, res) => {
 
 // Route to handle the search
 app.post("/search", async (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "https://danielleahenry.github.io");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
   const { query } = req.body;
 
   if (!query) {
@@ -53,6 +57,7 @@ app.post("/search", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch from Deezer" });
   }
 });
+
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {

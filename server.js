@@ -4,19 +4,19 @@ const cors = require("cors");
 
 const app = express();
 
-// ✅ Correct CORS configuration
+//cors config
 const corsOptions = {
-  origin: "https://danielleahenry.github.io", // Frontend URL
+  origin: "https://danielleahenry.github.io", // frontend URL
   methods: ["GET", "POST", "OPTIONS"],
   allowedHeaders: ["Content-Type"],
-  optionsSuccessStatus: 200, // Helps with legacy browser issues
+  optionsSuccessStatus: 200,
 };
 
-app.use(cors(corsOptions)); // Apply CORS middleware globally
+app.use(cors(corsOptions));
 app.use(express.json());
-app.options("*", cors(corsOptions)); // Handles all preflight requests
+app.options("*", cors(corsOptions));
 
-// Route to handle the search
+// route to handle the search
 app.post("/search", async (req, res) => {
   const { query } = req.body;
 

@@ -20,7 +20,7 @@ let colorIndex = 0; // for navigating color circles
 
 const scrollAmount = 60;
 
-// === Helpers ===
+// === getters ===
 function getCurrentAlbums() {
   const activeScreen = document.querySelector(".app-screen.show");
   return Array.from(activeScreen.querySelectorAll(".album"));
@@ -40,7 +40,7 @@ function getCurrentScrollContainer() {
   );
 }
 
-// === Navigation Toggle ===
+//navi toggle
 menuButton.addEventListener("click", () => {
   const isOpen = navMenu.classList.contains("show");
 
@@ -70,7 +70,7 @@ menuButton.addEventListener("click", () => {
   }
 });
 
-// === Overlay click closes menu ===
+//overlay click closes menu
 screenOverlay.addEventListener("click", () => {
   navMenu.classList.remove("show");
   screenOverlay.classList.remove("show");
@@ -78,7 +78,7 @@ screenOverlay.addEventListener("click", () => {
   inNavMode = false;
 });
 
-// === Show screen ===
+//show screen
 function showScreen(screenId) {
   document.querySelectorAll(".app-screen").forEach((screen) => {
     screen.classList.remove("show");
@@ -96,7 +96,7 @@ function showScreen(screenId) {
   highlightCurrentItem();
 }
 
-// === Highlighting ===
+//highlighting
 function highlightAlbum(index) {
   const albums = getCurrentAlbums();
   albums.forEach((album, i) => {
@@ -135,7 +135,7 @@ function highlightNav(index) {
   navButtons[index].scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
-// === Scroll Down ===
+//scroll down
 scrollDownBtn.addEventListener("click", () => {
   if (inNavMode) {
     if (navIndex < navButtons.length - 1) {
@@ -181,7 +181,7 @@ scrollDownBtn.addEventListener("click", () => {
   }
 });
 
-// === Scroll Up ===
+//scroll up
 scrollUpBtn.addEventListener("click", () => {
   if (inNavMode) {
     if (navIndex > 0) {
@@ -235,7 +235,7 @@ scrollUpBtn.addEventListener("click", () => {
   }
 });
 
-// === Center Button Select ===
+//center button select
 centerButton.addEventListener("click", () => {
   if (inNavMode) {
     const selectedBtn = navButtons[navIndex];
@@ -259,12 +259,12 @@ centerButton.addEventListener("click", () => {
         ipodElement.style.backgroundColor = selectedColor;
       }
     } else {
-      // Optional: album action
+      //album section
     }
   }
 });
 
-// === Flash Highlight ===
+//flash
 function flashHighlight(element) {
   if (!element) return;
   element.classList.add("clicked");
@@ -273,14 +273,14 @@ function flashHighlight(element) {
   }, 300);
 }
 
-// === Init on Load ===
+//init on load
 window.addEventListener("DOMContentLoaded", () => {
   showScreen("home");
   document.documentElement.setAttribute("data-theme", "dark");
   colorCircles[0]?.classList.add("selected");
 });
 
-// === Theme Toggle ===
+//theme
 themeToggle.addEventListener("change", () => {
   if (themeToggle.checked) {
     document.documentElement.setAttribute("data-theme", "light");
@@ -299,9 +299,8 @@ let micHoldTimer = null;
 
 const micHoldThreshold = 750; // .75 second
 
-console.log("🎯 Binding mic listeners...");
+console.log("Binding mic listeners...");
 
-// === Bind for both mouse and touch ===
 centerButton.addEventListener("mousedown", handlePressStart);
 centerButton.addEventListener("mouseup", handlePressEnd);
 centerButton.addEventListener("mouseleave", handlePressEnd);
@@ -310,7 +309,7 @@ centerButton.addEventListener("touchstart", handlePressStart);
 centerButton.addEventListener("touchend", handlePressEnd);
 centerButton.addEventListener("touchcancel", handlePressEnd);
 
-// === Speech Recognition Setup ===
+//speech recog
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 let recognition = null;
 let capturedText = "";
@@ -337,9 +336,9 @@ if (SpeechRecognition) {
   console.warn("Speech Recognition not supported in this browser.");
 }
 
-// === Voice Backend Integration ===
+//voice to backend
 async function sendVoiceQuery(transcribedText) {
-  console.log("🎯 sendVoiceQuery started with:", transcribedText);
+  console.log("sendVoiceQuery started with:", transcribedText);
 
   try {
     const res = await fetch("https://auri-zvxo.onrender.com/search", {
@@ -353,17 +352,17 @@ async function sendVoiceQuery(transcribedText) {
     console.log("🌐 Received response:", res);
 
     const data = await res.json();
-    console.log("📦 Parsed response JSON:", data);
+    console.log("Parsed response JSON:", data);
 
     if (res.ok) {
-      console.log("✅ Response is OK — Updating UI...");
+      console.log("Response is OK — Updating UI...");
       updateNowPlaying(data);
       playPreview(data.previewUrl);
     } else {
-      console.error("❌ Backend returned error:", data);
+      console.error("Backend returned error:", data);
     }
   } catch (err) {
-    console.error("💥 Fetch failed:", err);
+    console.error("Fetch failed:", err);
   }
 }
 
@@ -386,12 +385,12 @@ function playPreview(previewUrl) {
   audio.play();
 }
 
-// === Updated Mic Press Logic ===
+//mic press
 function handlePressStart() {
-  console.log("🔥 handlePressStart triggered");
+  console.log("handlePressStart triggered");
 
   micHoldTimer = setTimeout(() => {
-    console.log("✅ Long press detected — starting recognition");
+    console.log("Long press detected — starting recognition");
     micPopup.classList.add("show");
     screenOverlay.classList.add("show");
 
@@ -399,38 +398,38 @@ function handlePressStart() {
       recognition.start();
       console.log("🗣️ recognition.start() called");
     } else {
-      console.warn("❌ SpeechRecognition not available");
+      console.warn("SpeechRecognition not available");
     }
   }, micHoldThreshold);
 }
 
 
 function handlePressEnd() {
-  console.log("🛑 handlePressEnd triggered");
+  console.log("handlePressEnd triggered");
   clearTimeout(micHoldTimer);
   micHoldTimer = null;
 
   if (micPopup.classList.contains("show")) {
-    console.log("🎤 Mic popup was visible — ending session");
+    console.log("Mic popup was visible — ending session");
 
     micPopup.classList.remove("show");
     screenOverlay.classList.remove("show");
 
     if (recognition) {
       recognition.stop();
-      console.log("🛑 recognition.stop() called");
+      console.log("recognition.stop() called");
     }
 
-    console.log("📝 Captured text:", capturedText);
+    console.log("Captured text:", capturedText);
 
     if (capturedText.trim()) {
-      console.log("🚀 Sending captured text to backend...");
+      console.log("Sending captured text to backend...");
       sendVoiceQuery(capturedText.trim());
     } else {
-      console.log("⚠️ No captured text");
+      console.log("No captured text");
     }
   } else {
-    console.log("❌ Mic popup was not showing, nothing to stop.");
+    console.log("Mic popup was not showing, nothing to stop.");
   }
 }
 
